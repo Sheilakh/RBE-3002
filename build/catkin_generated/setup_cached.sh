@@ -8,6 +8,8 @@
 
 # modified environment variables
 export CMAKE_PREFIX_PATH="/home/jwwennersten/RBE-3002/devel:$CMAKE_PREFIX_PATH"
+export LD_LIBRARY_PATH="/home/jwwennersten/RBE-3002/devel/lib:$LD_LIBRARY_PATH"
+export PKG_CONFIG_PATH="/home/jwwennersten/RBE-3002/devel/lib/pkgconfig:$PKG_CONFIG_PATH"
 export PWD="/home/jwwennersten/RBE-3002/build"
 export ROSLISP_PACKAGE_DIRECTORIES="/home/jwwennersten/RBE-3002/devel/share/common-lisp"
 export ROS_PACKAGE_PATH="/home/jwwennersten/catkin_ws/src:/home/jwwennersten/RBE-3002/src:$ROS_PACKAGE_PATH"

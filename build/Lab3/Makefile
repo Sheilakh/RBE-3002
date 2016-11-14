@@ -120,14 +120,14 @@ test/fast: test
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/jwwennersten/RBE-3002/build/CMakeFiles /home/jwwennersten/RBE-3002/build/CMakeFiles/progress.marks
-	$(MAKE) -f CMakeFiles/Makefile2 all
+	cd /home/jwwennersten/RBE-3002/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/jwwennersten/RBE-3002/build/CMakeFiles /home/jwwennersten/RBE-3002/build/Lab3/CMakeFiles/progress.marks
+	cd /home/jwwennersten/RBE-3002/build && $(MAKE) -f CMakeFiles/Makefile2 Lab3/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/jwwennersten/RBE-3002/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	$(MAKE) -f CMakeFiles/Makefile2 clean
+	cd /home/jwwennersten/RBE-3002/build && $(MAKE) -f CMakeFiles/Makefile2 Lab3/clean
 .PHONY : clean
 
 # The main clean target
@@ -136,147 +136,59 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	$(MAKE) -f CMakeFiles/Makefile2 preinstall
+	cd /home/jwwennersten/RBE-3002/build && $(MAKE) -f CMakeFiles/Makefile2 Lab3/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	$(MAKE) -f CMakeFiles/Makefile2 preinstall
+	cd /home/jwwennersten/RBE-3002/build && $(MAKE) -f CMakeFiles/Makefile2 Lab3/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	$(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/jwwennersten/RBE-3002/build && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
-#=============================================================================
-# Target rules for targets named clean_test_results
+# Convenience name for target.
+Lab3/CMakeFiles/std_msgs_generate_messages_cpp.dir/rule:
+	cd /home/jwwennersten/RBE-3002/build && $(MAKE) -f CMakeFiles/Makefile2 Lab3/CMakeFiles/std_msgs_generate_messages_cpp.dir/rule
+.PHONY : Lab3/CMakeFiles/std_msgs_generate_messages_cpp.dir/rule
 
-# Build rule for target.
-clean_test_results: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 clean_test_results
-.PHONY : clean_test_results
-
-# fast build rule for target.
-clean_test_results/fast:
-	$(MAKE) -f CMakeFiles/clean_test_results.dir/build.make CMakeFiles/clean_test_results.dir/build
-.PHONY : clean_test_results/fast
-
-#=============================================================================
-# Target rules for targets named download_extra_data
-
-# Build rule for target.
-download_extra_data: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 download_extra_data
-.PHONY : download_extra_data
-
-# fast build rule for target.
-download_extra_data/fast:
-	$(MAKE) -f CMakeFiles/download_extra_data.dir/build.make CMakeFiles/download_extra_data.dir/build
-.PHONY : download_extra_data/fast
-
-#=============================================================================
-# Target rules for targets named doxygen
-
-# Build rule for target.
-doxygen: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 doxygen
-.PHONY : doxygen
-
-# fast build rule for target.
-doxygen/fast:
-	$(MAKE) -f CMakeFiles/doxygen.dir/build.make CMakeFiles/doxygen.dir/build
-.PHONY : doxygen/fast
-
-#=============================================================================
-# Target rules for targets named run_tests
-
-# Build rule for target.
-run_tests: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 run_tests
-.PHONY : run_tests
-
-# fast build rule for target.
-run_tests/fast:
-	$(MAKE) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/build
-.PHONY : run_tests/fast
-
-#=============================================================================
-# Target rules for targets named tests
-
-# Build rule for target.
-tests: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 tests
-.PHONY : tests
-
-# fast build rule for target.
-tests/fast:
-	$(MAKE) -f CMakeFiles/tests.dir/build.make CMakeFiles/tests.dir/build
-.PHONY : tests/fast
-
-#=============================================================================
-# Target rules for targets named gtest
-
-# Build rule for target.
-gtest: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 gtest
-.PHONY : gtest
-
-# fast build rule for target.
-gtest/fast:
-	$(MAKE) -f gtest/CMakeFiles/gtest.dir/build.make gtest/CMakeFiles/gtest.dir/build
-.PHONY : gtest/fast
-
-#=============================================================================
-# Target rules for targets named gtest_main
-
-# Build rule for target.
-gtest_main: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 gtest_main
-.PHONY : gtest_main
-
-# fast build rule for target.
-gtest_main/fast:
-	$(MAKE) -f gtest/CMakeFiles/gtest_main.dir/build.make gtest/CMakeFiles/gtest_main.dir/build
-.PHONY : gtest_main/fast
-
-#=============================================================================
-# Target rules for targets named std_msgs_generate_messages_cpp
-
-# Build rule for target.
-std_msgs_generate_messages_cpp: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 std_msgs_generate_messages_cpp
+# Convenience name for target.
+std_msgs_generate_messages_cpp: Lab3/CMakeFiles/std_msgs_generate_messages_cpp.dir/rule
 .PHONY : std_msgs_generate_messages_cpp
 
 # fast build rule for target.
 std_msgs_generate_messages_cpp/fast:
-	$(MAKE) -f lab3/CMakeFiles/std_msgs_generate_messages_cpp.dir/build.make lab3/CMakeFiles/std_msgs_generate_messages_cpp.dir/build
+	cd /home/jwwennersten/RBE-3002/build && $(MAKE) -f Lab3/CMakeFiles/std_msgs_generate_messages_cpp.dir/build.make Lab3/CMakeFiles/std_msgs_generate_messages_cpp.dir/build
 .PHONY : std_msgs_generate_messages_cpp/fast
 
-#=============================================================================
-# Target rules for targets named std_msgs_generate_messages_lisp
+# Convenience name for target.
+Lab3/CMakeFiles/std_msgs_generate_messages_lisp.dir/rule:
+	cd /home/jwwennersten/RBE-3002/build && $(MAKE) -f CMakeFiles/Makefile2 Lab3/CMakeFiles/std_msgs_generate_messages_lisp.dir/rule
+.PHONY : Lab3/CMakeFiles/std_msgs_generate_messages_lisp.dir/rule
 
-# Build rule for target.
-std_msgs_generate_messages_lisp: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 std_msgs_generate_messages_lisp
+# Convenience name for target.
+std_msgs_generate_messages_lisp: Lab3/CMakeFiles/std_msgs_generate_messages_lisp.dir/rule
 .PHONY : std_msgs_generate_messages_lisp
 
 # fast build rule for target.
 std_msgs_generate_messages_lisp/fast:
-	$(MAKE) -f lab3/CMakeFiles/std_msgs_generate_messages_lisp.dir/build.make lab3/CMakeFiles/std_msgs_generate_messages_lisp.dir/build
+	cd /home/jwwennersten/RBE-3002/build && $(MAKE) -f Lab3/CMakeFiles/std_msgs_generate_messages_lisp.dir/build.make Lab3/CMakeFiles/std_msgs_generate_messages_lisp.dir/build
 .PHONY : std_msgs_generate_messages_lisp/fast
 
-#=============================================================================
-# Target rules for targets named std_msgs_generate_messages_py
+# Convenience name for target.
+Lab3/CMakeFiles/std_msgs_generate_messages_py.dir/rule:
+	cd /home/jwwennersten/RBE-3002/build && $(MAKE) -f CMakeFiles/Makefile2 Lab3/CMakeFiles/std_msgs_generate_messages_py.dir/rule
+.PHONY : Lab3/CMakeFiles/std_msgs_generate_messages_py.dir/rule
 
-# Build rule for target.
-std_msgs_generate_messages_py: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 std_msgs_generate_messages_py
+# Convenience name for target.
+std_msgs_generate_messages_py: Lab3/CMakeFiles/std_msgs_generate_messages_py.dir/rule
 .PHONY : std_msgs_generate_messages_py
 
 # fast build rule for target.
 std_msgs_generate_messages_py/fast:
-	$(MAKE) -f lab3/CMakeFiles/std_msgs_generate_messages_py.dir/build.make lab3/CMakeFiles/std_msgs_generate_messages_py.dir/build
+	cd /home/jwwennersten/RBE-3002/build && $(MAKE) -f Lab3/CMakeFiles/std_msgs_generate_messages_py.dir/build.make Lab3/CMakeFiles/std_msgs_generate_messages_py.dir/build
 .PHONY : std_msgs_generate_messages_py/fast
 
 # Help Target
@@ -285,23 +197,16 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... clean_test_results"
-	@echo "... download_extra_data"
-	@echo "... doxygen"
 	@echo "... edit_cache"
 	@echo "... install"
 	@echo "... install/local"
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
-	@echo "... run_tests"
-	@echo "... test"
-	@echo "... tests"
-	@echo "... gtest"
-	@echo "... gtest_main"
 	@echo "... std_msgs_generate_messages_cpp"
 	@echo "... std_msgs_generate_messages_lisp"
 	@echo "... std_msgs_generate_messages_py"
+	@echo "... test"
 .PHONY : help
 
 
@@ -313,6 +218,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	$(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/jwwennersten/RBE-3002/build && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 
