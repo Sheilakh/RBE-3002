@@ -4,7 +4,7 @@ import rospy, math, copy
 from heapq import *
 from Queue import PriorityQueue
 from nav_msgs.msg import GridCells
-from geometry_msgs.msg import Point, Pose, PoseStamped, PoseWithCovarianceStamped
+from geometry_msgs.msg import Point, Pose, PoseStamped, PoseWithCovarianceStamped, Quaternion
 from nav_msgs.msg import OccupancyGrid, Path
 
 # Node class, basically a simplified Point object
@@ -121,14 +121,16 @@ def aStar():
         expanded[current[1]] = mapNodes[current[1]] # Add current to expanded nodes
         
         if current[1] == goalIndex: # Check if arrived at goal, if so then done!
-            # Construct and send final path to rviz
+            # Construct and send final path and waypoints to rviz
             path = GridCells()
             path.header.frame_id = 'map'
-            # Base on resolution of global map
             path.cell_width = resolution
             path.cell_height = resolution
-            path.cells = buildPath(goalIndex, cameFrom)
+            way = Path()
+            way.header.frame_id = 'map'
+            path.cells, way.poses = buildPath(goalIndex, cameFrom)
             pubPath.publish(path)
+            pubWay.publish(way)
             print "Path found!"
             return
         
@@ -148,15 +150,24 @@ def aStar():
     # Couldn't complete for some reason
     print "A* navigation failed."
 
-# Builds a Point array path from the cameFrom dictionary and the goal node index, recursive wow!
+# Builds a Point array and a Path path from the cameFrom dictionary and the goal node index, recursive wow!
+# Double return!
 def buildPath(index, cameFrom):
     if index == startIndex: # Reached start node, return startPoint, end of recursion
         node = mapNodes[startIndex]
         point = Point(node.x, node.y, 0)
-        return [point]
+        pose = PoseStamped()
+        pose.header.frame_id = 'map'
+        pose.pose = Pose(Point(node.x, node.y, 0), Quaternion(0, 0, 0, 1))
+        return [point], [pose]
     # Else recurse for precursor node and add on the current point to the end
     node = mapNodes[index]
-    return buildPath(cameFrom[index], cameFrom) + [Point(node.x, node.y, 0)]
+    point = Point(node.x, node.y, 0)
+    pose = PoseStamped()
+    pose.header.frame_id = 'map'
+    pose.pose = Pose(Point(node.x, node.y, 0), Quaternion(0, 0, 0, 1))
+    ret1, ret2 = buildPath(cameFrom[index], cameFrom)
+    return (ret1 + [point]), (ret2 + [pose])
 
 # Returns all neighbors (nodes) of the specified node (super inefficient, should have linked the nodes or something, sorry)
 def getNeighbors(node):
@@ -176,7 +187,7 @@ def getNeighbors(node):
 
 # Calculates the straight line distance between the two nodes
 def calcDistance(nodeA, nodeB):
-    distance = math.sqrt((nodeB.x - nodeA.x)**2 + (nodeB.y - nodeA.y)**2) # Euclidian (manhattan better/worse?)
+    distance = math.sqrt((nodeB.x - nodeA.x)**2 + (nodeB.y - nodeA.y)**2) # Euclidian
     return distance
 
 # Publishes three occupancy grids (expanded, frontier, and unexplored) from given lists to rviz using gridcells type
@@ -232,6 +243,7 @@ def run():
     global pubFrontier
     global pubUnexplored
     global pubPath
+    global pubWay
     
     rospy.init_node('lab3_aStar_navigation_node')
     
@@ -240,7 +252,7 @@ def run():
     pubFrontier = rospy.Publisher("/lab3/frontierCells", GridCells, queue_size=1)
     pubUnexplored = rospy.Publisher("/lab3/unexploredCells", GridCells, queue_size=1)
     pubPath = rospy.Publisher("/lab3/path", GridCells, queue_size=1)
-    # pubway = rospy.Publisher("/lab3/waypoints", Path, queue_size=1)
+    pubWay = rospy.Publisher("/lab3/waypoints", Path, queue_size=1)
     subGoal = rospy.Subscriber('/lab3/goalPose', PoseStamped, readGoal, queue_size=1)
     subStart = rospy.Subscriber('/lab3/startPose', PoseWithCovarianceStamped, readStart, queue_size=1)
 
