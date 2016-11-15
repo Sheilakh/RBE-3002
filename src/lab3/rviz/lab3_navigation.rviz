@@ -128,7 +128,7 @@ Visualization Manager:
     - Alpha: 1
       Buffer Length: 1
       Class: rviz/Path
-      Color: 0; 255; 255
+      Color: 255; 0; 0
       Enabled: true
       Line Style: Lines
       Line Width: 0.03
