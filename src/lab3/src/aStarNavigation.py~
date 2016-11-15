@@ -7,7 +7,7 @@ from nav_msgs.msg import GridCells
 from geometry_msgs.msg import Point, Pose, PoseStamped, PoseWithCovarianceStamped, Quaternion
 from nav_msgs.msg import OccupancyGrid, Path
 
-# Node class, basically a simplified Point object
+# Node class, basically a simplified Point object, with equivalence handling
 class Node:
     def __init__(self, x, y):
         self.x = x
@@ -63,6 +63,24 @@ def generateMapNodes():
     #    point.z = 0
     #    cellsMap.cells.append(point)
     #pubPath.publish(cellsMap)
+    
+# Reads in the start pose from rviz and determines which node has been selected
+def readStart(startPos):
+    global startIndex
+    
+    startNode = Node(0,0)
+    # Shift position to match up with node grid
+    startNode.x = (startPos.pose.pose.position.x - (startPos.pose.pose.position.x % resolution)) + (resolution * 0.5)
+    startNode.y = (startPos.pose.pose.position.y - (startPos.pose.pose.position.y % resolution)) + (resolution * 0.5)
+    
+    # Find corresponding node in map
+    for index in mapNodes:
+        if mapNodes[index] == startNode:
+            startIndex = index
+            print "Start recieved."
+            # print startPos
+            return
+    print "WARNING: Start wasn't identified as a node."
 
 # Reads in the goal pose from rviz, determines which node has been selected, and runs the aStar algorithm
 def readGoal(goal):
@@ -82,25 +100,6 @@ def readGoal(goal):
             aStar() # Start Astar
             return
     print "WARNING: Goal wasn't identified as a node."
-    
-
-# Reads in the start pose from rviz and determines which node has been selected
-def readStart(startPos):
-    global startIndex
-    
-    startNode = Node(0,0)
-    # Shift position to match up with node grid
-    startNode.x = (startPos.pose.pose.position.x - (startPos.pose.pose.position.x % resolution)) + (resolution * 0.5)
-    startNode.y = (startPos.pose.pose.position.y - (startPos.pose.pose.position.y % resolution)) + (resolution * 0.5)
-    
-    # Find corresponding node in map
-    for index in mapNodes:
-        if mapNodes[index] == startNode:
-            startIndex = index
-            print "Start recieved."
-            # print startPos
-            return
-    print "WARNING: Start wasn't identified as a node."
 
 # The big bad A* algorithm function
 def aStar():
@@ -150,25 +149,6 @@ def aStar():
     # Couldn't complete for some reason
     print "A* navigation failed."
 
-# Builds a Point array and a Path path from the cameFrom dictionary and the goal node index, recursive wow!
-# Double return!
-def buildPath(index, cameFrom):
-    if index == startIndex: # Reached start node, return startPoint, end of recursion
-        node = mapNodes[startIndex]
-        point = Point(node.x, node.y, 0)
-        pose = PoseStamped()
-        pose.header.frame_id = 'map'
-        pose.pose = Pose(Point(node.x, node.y, 0), Quaternion(0, 0, 0, 1))
-        return [point], [pose]
-    # Else recurse for precursor node and add on the current point to the end
-    node = mapNodes[index]
-    point = Point(node.x, node.y, 0)
-    pose = PoseStamped()
-    pose.header.frame_id = 'map'
-    pose.pose = Pose(Point(node.x, node.y, 0), Quaternion(0, 0, 0, 1))
-    ret1, ret2 = buildPath(cameFrom[index], cameFrom)
-    return (ret1 + [point]), (ret2 + [pose])
-
 # Returns all neighbors (nodes) of the specified node (super inefficient, should have linked the nodes or something, sorry)
 def getNeighbors(node):
     # Generate the four potential neighbors
@@ -189,6 +169,25 @@ def getNeighbors(node):
 def calcDistance(nodeA, nodeB):
     distance = math.sqrt((nodeB.x - nodeA.x)**2 + (nodeB.y - nodeA.y)**2) # Euclidian
     return distance
+
+# Builds a Point array and a Path path from the cameFrom dictionary and the goal node index, recursive wow!
+# Double return!
+def buildPath(index, cameFrom):
+    if index == startIndex: # Reached start node, return startPoint, end of recursion
+        node = mapNodes[startIndex]
+        point = Point(node.x, node.y, 0)
+        pose = PoseStamped()
+        pose.header.frame_id = 'map'
+        pose.pose = Pose(Point(node.x, node.y, 0), Quaternion(0, 0, 0, 1))
+        return [point], [pose]
+    # Else recurse for precursor node and add on the current point to the end
+    node = mapNodes[index]
+    point = Point(node.x, node.y, 0)
+    pose = PoseStamped()
+    pose.header.frame_id = 'map'
+    pose.pose = Pose(Point(node.x, node.y, 0), Quaternion(0, 0, 0, 1))
+    ret1, ret2 = buildPath(cameFrom[index], cameFrom)
+    return (ret1 + [point]), (ret2 + [pose])
 
 # Publishes three occupancy grids (expanded, frontier, and unexplored) from given lists to rviz using gridcells type
 # Expanded is dictionary or nodes, frontier is heapq priority queue, unexplored is dictionary of nodes
@@ -215,7 +214,7 @@ def publishCells(expanded, frontier, unexplored):
     cellsFrontier.header.frame_id = 'map'
     cellsFrontier.cell_width = resolution
     cellsFrontier.cell_height = resolution
-    for element in frontier: # Pull all elements
+    for element in frontier:
         node = mapNodes[element[1]]
         point=Point()
         point.x = node.x
@@ -247,6 +246,7 @@ def run():
     
     rospy.init_node('lab3_aStar_navigation_node')
     
+    # Publishers and subscribers
     subMap = rospy.Subscriber("/map", OccupancyGrid, mapCallBack)
     pubExpanded = rospy.Publisher("/lab3/expandedCells", GridCells, queue_size=1)
     pubFrontier = rospy.Publisher("/lab3/frontierCells", GridCells, queue_size=1)
@@ -256,7 +256,7 @@ def run():
     subGoal = rospy.Subscriber('/lab3/goalPose', PoseStamped, readGoal, queue_size=1)
     subStart = rospy.Subscriber('/lab3/startPose', PoseWithCovarianceStamped, readStart, queue_size=1)
 
-    # Wait a second for publisher, subscribers, and TF
+    # Wait around while A*
     rospy.spin()
     
 
