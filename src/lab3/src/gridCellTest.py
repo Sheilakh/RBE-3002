@@ -8,7 +8,7 @@ from geometry_msgs.msg import Point
 if __name__ == '__main__':
     rospy.init_node('lab3_gridCellTest_node')
     
-    pub = rospy.Publisher('lab3/GridCells', GridCells, queue_size = 10)
+    pub = rospy.Publisher('lab3/gridCellsTest', GridCells, queue_size = 10)
     
     msg = GridCells(cell_width = 0.3, cell_height = 0.3)
     msg.header.frame_id = "map"

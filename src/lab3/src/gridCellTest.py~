@@ -16,7 +16,7 @@ if __name__ == '__main__':
     # SimpleMap dimensions 37x37 at 0.3 resolution
     
     points = []
-    for i in range(37):
+    for i in range(38):
         points.append(Point(i*0.3, i*0.3, 0))
     
     msg.cells = points
