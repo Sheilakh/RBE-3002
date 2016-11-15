@@ -118,7 +118,6 @@ def aStar():
     # Current is tuple of (f score, node index), refer to index as current[1]
     while frontier: # While there are still nodes to explore
         current = heappop(frontier) # Pull new tuple from frontier
-        print current
         expanded[current[1]] = mapNodes[current[1]] # Add current to expanded nodes
         
         if current[1] == goalIndex: # Check if arrived at goal, if so then done!
@@ -219,7 +218,7 @@ def publishCells(expanded, frontier, unexplored):
     cellsUnexplored.header.frame_id = 'map'
     cellsUnexplored.cell_width = resolution
     cellsUnexplored.cell_height = resolution
-    for node in expanded.values():
+    for node in unexplored.values():
         point=Point()
         point.x = node.x
         point.y = node.y

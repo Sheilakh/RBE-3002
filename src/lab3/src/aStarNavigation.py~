@@ -118,7 +118,6 @@ def aStar():
     # Current is tuple of (f score, node index), refer to index as current[1]
     while frontier: # While there are still nodes to explore
         current = heappop(frontier) # Pull new tuple from frontier
-        print current
         expanded[current[1]] = mapNodes[current[1]] # Add current to expanded nodes
         
         if current[1] == goalIndex: # Check if arrived at goal, if so then done!
@@ -131,7 +130,7 @@ def aStar():
             path.cells = buildPath(goalIndex, cameFrom)
             pubPath.publish(path)
             print "Path found!"
-            break
+            return
         
         # Next is index of node object
         for next in getNeighbors(mapNodes[current[1]]): # For all neighbors of current
