@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import rospy, math, copy
+import rospy, math, copy, numpy
 from heapq import *
 from Queue import PriorityQueue
 from nav_msgs.msg import GridCells
@@ -128,6 +128,7 @@ def aStar():
             way = Path()
             way.header.frame_id = 'map'
             path.cells, way.poses = buildPath(goalIndex, cameFrom)
+            way.poses = condensePoses(way.poses) # Remove superflouous intermediaries
             pubPath.publish(path)
             pubWay.publish(way)
             print "Path found!"
@@ -188,6 +189,30 @@ def buildPath(index, cameFrom):
     pose.pose = Pose(Point(node.x, node.y, 0), Quaternion(0, 0, 0, 1))
     ret1, ret2 = buildPath(cameFrom[index], cameFrom)
     return (ret1 + [point]), (ret2 + [pose])
+
+# Removes unnecessary poses along waypoint pose array, just want corners
+def condensePoses(path):
+    remove = ()
+    index = 1
+    length = len(path)
+    while index > 0 and index < (length-1): # Restrict to 1 to n-1 to avoid out of bounds
+        current = path[index].pose.position
+        prev = path[index-1].pose.position
+        next = path[index+1].pose.position
+        # All three colinear
+        if (((abs(prev.x - current.x) < (resolution * 0.5)) and (abs(current.x - next.x) < (resolution * 0.5))) or
+                ((abs(prev.y - current.y) < (resolution * 0.5)) and (abs(current.y - next.y) < (resolution * 0.5)))):
+            path.pop(index) # Remove the middle pose, unnecessary
+            length = len(path) # Refresh list length
+            # Keep index the same, since list has shifted back
+        else:
+            index = index + 1 # Increment
+        
+        # Current is a corner, should alter orientation to look to next node
+        #elif (((abs(prev.x - current.x) < (resolution * 0.5)) and (abs(current.y - next.y) < (resolution * 0.5))) or
+        #        ((abs(prev.y - current.y) < (resolution * 0.5)) and (abs(current.x - next.x) < (resolution * 0.5)))):
+        #    pass # Do this next lab I guess
+    return path
 
 # Publishes three occupancy grids (expanded, frontier, and unexplored) from given lists to rviz using gridcells type
 # Expanded is dictionary or nodes, frontier is heapq priority queue, unexplored is dictionary of nodes
