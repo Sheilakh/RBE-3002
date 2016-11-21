@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>lab3</name>
+  <name>lab2</name>
   <version>0.0.0</version>
-  <description>The lab3 package</description>
+  <description>The lab2 package</description>
   <maintainer email="jwwennersten@wpi.edu">jwwennersten</maintainer>
   <license>BSD</license>
   <buildtool_depend>catkin</buildtool_depend>
