@@ -18,7 +18,7 @@ class Robot(object):
 		self._ty = 0
 		self._tz = 0
 
-		self._traj_step = 2
+		self._traj_step = 2 # Skip first pose, robot is already there
 		self._tempgoalset = False
 
 		self._gx = -1
@@ -35,6 +35,7 @@ class Robot(object):
 		self._map = robot_map # map data struct
 		self._odom_list = tf.TransformListener()
 
+		# Verbose flag, if you want print statements
 		self._v = v
 
 	# Goal callback function
@@ -74,7 +75,7 @@ class Robot(object):
 		self._z = euler_from_quaternion(quat)[2]
 
 
-	# run A star search
+	# Run A star search
 	def _run_a_star(self, start_tup, goal_tup):
 		sp = self._map.point_to_grid((start_tup[0], start_tup[1]))
 		gp = self._map.point_to_grid((goal_tup[0], goal_tup[1]))
@@ -111,14 +112,15 @@ class Robot(object):
 		return path
 
 	# This function accepts a speed and a distance for the robot to move in a straight line
-	# returns whether or not the robot has completed that distance
+	# Returns whether or not the robot has completed that distance
 	def _drive_straight(self, speed, goaldist):
 		# Record initial position
 		if(not self._tempgoalset):
 			self._tx = self._x + goaldist*math.cos(self._z)
 			self._ty = self._y + goaldist*math.sin(self._z)
 			self._tempgoalset = True
-		#distance between current pose and drive goal
+			
+		# Distance between current pose and drive goal
 		dist = self._map.distance((self._x, self._y),(self._tx,self._ty))
 		atTarget = dist < 0.02
 
@@ -131,11 +133,10 @@ class Robot(object):
 					print "_drive_straight done"
 				return 0
 			else:
-				kp = 0.75
 				if(dist/goaldist < 0.5):
-					speed = (dist/goaldist)*kp*speed
+					speed = (dist/goaldist)*speed
 				else:
-					speed = ((goaldist-dist)/goaldist)*kp*speed
+					speed = ((goaldist-dist)/goaldist)*speed
 				if(speed < 0.1):
 					speed = 0.1
 				self._pub_twist(speed,0)
@@ -182,11 +183,10 @@ class Robot(object):
 					print "_rotate done"
 				return 0
 			else:
-				kp = 0.75
 				if(traveled/theta < 0.5):
-					speed = (traveled/theta)*kp*speed
+					speed = (traveled/theta)*speed
 				else:
-					speed = ((theta-traveled)/theta)*kp*speed
+					speed = ((theta-traveled)/theta)*speed
 				if(speed < 0.1):
 					speed = 0.1
 				self._pub_twist(0,speed)
@@ -225,21 +225,22 @@ class Robot(object):
 		termtest = self._nav_to_pose(self._map.grid_to_point(plist[i]))
 		if (termtest == (2,0)):
 			if (i == len(plist)-1):
+				self._traj_step = 2 # Reset step count
 				if self._v:
 					print "completed trajectory"
 				return 0
 
 		return termtest[1]
 
+	# Just rotate 180 degrees in place, probably always run twice
 	def _scan(self):
 		return self._rotate(180,0.5)
 
+	# Publish the A* path
 	def _pub_astar_path(self):
-		self._pub_path_cells(self._astarpath)
-	# publish the astar path
-	def _pub_path_cells(self, path):
+		path = self._astarpath
 		if self._v:
-			   print "Publishing Path"
+			   print "Publishing path."
 		cells = GridCells()
 		cells.header.frame_id = 'map'
 		cells.cell_width = self._map.get_resolution()
@@ -312,44 +313,41 @@ class Robot(object):
 
 
 	def execute(self):
-		# initial state
+		# Initial state
 		if self._state == 0:
 			#if self._v:
 			#	print "state 0"
 			rospy.sleep(0.2)
-		# compute a-star state
+		# Compute a-star state
 		elif self._state == 1:
 			if self._v:
-				print "state 1: running a star"
+				print "State 1: Running A*."
 			self._astarpath = self._run_a_star((self._x,self._y),(self._gx,self._gy))
 			if self._astarpath:
 				self._waypoints = self._map.get_waypoint_tuple(self._astarpath)
 				self._state += 1
-		# navigate to a star goal state
+		# Navigate to a star goal state
 		elif self._state == 2:
 			if self._v:
-				print "state 2: executing trajectory"
+				print "State 2: Executing trajectory."
 			step = self._execute_trajectory(self._waypoints)
 			if step == 0:
 				self._state += 1
-		# scan 180 degs
+		# Scan 360 degs (rotate 180 twice)
 		elif self._state == 3:
 			if self._v:
-				print "state 3: scanning"
+				print "State 3: Scanning."
 			if self._scan() == 0:
 				self._state += 1
-		# scan 180 degs
+		# Make frontier list
 		elif self._state == 4:
 			if self._v:
-				print "state 4: scanning"
-			if self._scan() == 0:
-				self._state += 1
-		# make frontier list
-		elif self._state == 5:
+				print "State 4: Make frontier list.
 			self.frontierList = self.map.get_frontier_list(self._map.get_data())
 			if(step == 0):
 				self._state += 1
+		# Shouldn't be reachable
 		else:
 			if v:
-				print "Error"
+				print "Error, invalid state."
 			return -1
