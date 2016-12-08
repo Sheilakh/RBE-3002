@@ -1,0 +1,8 @@
+prefix=/home/jwwennersten/RBE-3002/install
+
+Name: kpuczydlowski_lab2
+Description: Description of kpuczydlowski_lab2
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/jwwennersten/RBE-3002/install/lib -lkpuczydlowski_lab2
+Requires: rospy tf std_msgs kobuki_msgs geometry_msgs nav_msgs

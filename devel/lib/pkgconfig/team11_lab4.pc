@@ -1,0 +1,8 @@
+prefix=/home/jwwennersten/RBE-3002/devel
+
+Name: team11_lab4
+Description: Description of team11_lab4
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/jwwennersten/RBE-3002/devel/lib 
+Requires: 

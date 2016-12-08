@@ -1,0 +1,8 @@
+prefix=/home/jwwennersten/RBE-3002/install
+
+Name: team11_lab5
+Description: Description of team11_lab5
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/jwwennersten/RBE-3002/install/lib 
+Requires: 

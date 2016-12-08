@@ -5,4 +5,9 @@
 # This file includes the relevant testing commands required for 
 # testing this directory and lists subdirectories to be tested as well.
 SUBDIRS(gtest)
-SUBDIRS(lab3)
+SUBDIRS(jwwennersten_lab2)
+SUBDIRS(jwwennersten_lab3)
+SUBDIRS(team11_lab5)
+SUBDIRS(kpuczydlowski_lab2)
+SUBDIRS(kpuczydlowski_lab3)
+SUBDIRS(team11_lab4)

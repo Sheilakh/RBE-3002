@@ -117,7 +117,12 @@ ENDIF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unsp
 IF(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   INCLUDE("/home/jwwennersten/RBE-3002/build/gtest/cmake_install.cmake")
-  INCLUDE("/home/jwwennersten/RBE-3002/build/lab3/cmake_install.cmake")
+  INCLUDE("/home/jwwennersten/RBE-3002/build/jwwennersten_lab2/cmake_install.cmake")
+  INCLUDE("/home/jwwennersten/RBE-3002/build/jwwennersten_lab3/cmake_install.cmake")
+  INCLUDE("/home/jwwennersten/RBE-3002/build/team11_lab5/cmake_install.cmake")
+  INCLUDE("/home/jwwennersten/RBE-3002/build/kpuczydlowski_lab2/cmake_install.cmake")
+  INCLUDE("/home/jwwennersten/RBE-3002/build/kpuczydlowski_lab3/cmake_install.cmake")
+  INCLUDE("/home/jwwennersten/RBE-3002/build/team11_lab4/cmake_install.cmake")
 
 ENDIF(NOT CMAKE_INSTALL_LOCAL_ONLY)
 

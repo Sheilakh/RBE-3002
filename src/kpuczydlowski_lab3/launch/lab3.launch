@@ -1,0 +1,11 @@
+<launch>
+
+<arg name="map_file"		default=" $(env TURTLEBOT_STAGE_MAP_FILE)"/> <!-- robopark_plan -->
+
+<node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)">
+    <param name="frame_id" value="/map"/>
+  </node>
+
+<node name="rviz" pkg="rviz" type="rviz" args="~/catkin_ws/src/kpuczydlowski_lab3/lab3config.rviz"/> 
+
+</launch>

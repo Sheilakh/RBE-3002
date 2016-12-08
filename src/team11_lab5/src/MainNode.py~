@@ -1,0 +1,84 @@
+import rospy, tf
+from nav_msgs.msg import GridCells
+from std_msgs.msg import String
+from geometry_msgs.msg import Twist, Point, Pose, PoseStamped, PoseWithCovarianceStamped
+from nav_msgs.msg import Odometry, OccupancyGrid
+from kobuki_msgs.msg import BumperEvent
+from tf.transformations import euler_from_quaternion
+import threading
+import math
+from Queue import PriorityQueue
+
+from Robot import *
+from MyMap import *
+
+def set_goal(pose, arg):
+	arg.set_goal(pose, verbose = True)
+
+def map_callback(data, arg):
+	arg.update_map(data)
+
+def init_robot(vel_pub, path_pub, wall_pub, v = False):
+	if v:
+		print"initialize robot"
+	_map = MyMap()
+	robot = Robot(vel_pub, path_pub, wall_pub, _map, v)
+	return robot
+# Timer callback function
+# read odometry data
+def odom_timer_callback(*args,**kwargs):
+	print args
+	print "here"
+	args[1].waitForTransform("/map", "/base_footprint", rospy.Time(0), rospy.Duration(1, 0))
+	c_p, c_q = args[1].lookupTransform("/map", "/base_footprint", rospy.Time(0))
+	_current_pose = Pose()
+	_current_pose.position.x = c_p[0]
+	_current_pose.position.y = c_p[1]
+	_current_pose.position.y = c_p[2]
+	_current_pose.orientation.x = c_q[0]
+	_current_pose.orientation.y = c_q[1]
+	_current_pose.orientation.z = c_q[2]
+	_current_pose.orientation.w = c_q[3]
+	args[0].update_coordinates(_current_pose)
+
+def dummy_cb(e):
+	print "dummy"
+
+def main():
+	rospy.init_node('lab5')
+	odom_list = tf.TransformListener()
+	vel_pub = rospy.Publisher("/cmd_vel_mux/input/teleop", Twist, queue_size=1)
+	path_pub = rospy.Publisher("/path", GridCells, queue_size=1)
+	wall_pub = rospy.Publisher("/walls", GridCells, queue_size=1)
+
+	robot = init_robot(vel_pub, path_pub, wall_pub, v = True)
+	map_sub = rospy.Subscriber("/map", OccupancyGrid, map_callback, (robot))
+	goal_sub = rospy.Subscriber('/move_base_simple/goal2', PoseStamped, set_goal, (robot))
+
+	rospy.sleep(1)
+	odom_timer = threading.Timer(0.1, odom_timer_callback, [robot, odom_list])
+	odom_timer.start()	
+	print "here"
+	#rospy.Timer(rospy.Duration(0.1), odom_timer_callback)
+	#rospy.Timer(rospy.Duration(1), wall_pub_timer_cb, [robot, odom_list],{arg:1})
+	#rospy.Timer(rospy.Duration(1), path_pub_timer_cb, [robot],{arg:1})
+	rospy.Timer(rospy.Duration(1), dummy_cb,(robot))
+
+	while(not rospy.is_shutdown()):
+		#robot.execute()
+		#print "here"
+		rospy.sleep(.01)
+
+# Timer callback function
+# publish grid cells
+def wall_pub_timer_cb(arg):
+	args[0].pub_wall_cells()
+
+def path_pub_timer_cb(arg):
+	if(args[0].is_navigating()):
+		args[0].pub_astar_path()
+if __name__ == '__main__':
+	try:
+		main()
+	except rospy.ROSInterruptException:
+		pass
